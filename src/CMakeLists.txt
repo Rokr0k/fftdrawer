@@ -1,0 +1,1 @@
+target_sources(fftdrawer PUBLIC main.c dft.c)
