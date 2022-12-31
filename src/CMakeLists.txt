@@ -1,1 +1,1 @@
-target_sources(fftdrawer PUBLIC main.c dft.c)
+target_sources(fourierdrawer PUBLIC main.c dft.c)
