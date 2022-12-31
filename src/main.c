@@ -47,6 +47,7 @@ int main(int argc, char **argv)
     SDL_Event event;
     int quit = 0;
     double time = 0;
+    Uint32 delay = 0;
     while (!quit)
     {
         while (SDL_PollEvent(&event))
@@ -55,6 +56,20 @@ int main(int argc, char **argv)
             {
             case SDL_QUIT:
                 quit = 1;
+                break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_UP:
+                    delay++;
+                    break;
+                case SDLK_DOWN:
+                    if (delay > 0)
+                    {
+                        delay--;
+                    }
+                    break;
+                }
                 break;
             }
         }
@@ -75,17 +90,19 @@ int main(int argc, char **argv)
             pos += radius * cexp(I * (frequency * time + phase));
 
             ccircleRGBA(screen, prevPos + offset, radius, 0x7f, 0x7f, 0x7f, 0x7f);
-            clineRGBA(screen, prevPos + offset, pos + offset, 0xff, 0xff, 0x00, 0xff);
+            clineRGBA(screen, prevPos + offset, pos + offset, 0x7f, 0x7f, 0x00, 0xff);
         }
 
         queue[queueIdx] = pos;
-        for (size_t i = 1; i < length; i++)
-        {
-            size_t q = (length + (queueIdx - i)) % length;
-            size_t pq = (q + 1) % length;
-            clineRGBA(screen, queue[q] + offset, queue[pq] + offset, 0xff, 0xff, 0xff, 0xff);
-        }
         queueIdx = (queueIdx + 1) % length;
+        for (size_t i = 1; i < queueIdx; i++)
+        {
+            clineRGBA(screen, queue[i] + offset, queue[i - 1] + offset, 0xff, 0xff, 0xff, 0xff);
+        }
+
+        char delayStr[20] = {0};
+        sprintf(delayStr, "Delay: %ums", delay);
+        stringRGBA(screen, 2, 2, delayStr, 0xff, 0xff, 0xff, 0xff);
 
         SDL_Flip(screen);
 
@@ -94,7 +111,7 @@ int main(int argc, char **argv)
         {
             time -= 2 * M_PI;
         }
-        SDL_Delay(10);
+        SDL_Delay(delay);
     }
 
     SDL_Quit();
