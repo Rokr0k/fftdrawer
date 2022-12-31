@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     }
 
     FILE *input = fopen(argv[1], "r");
-    if(input == NULL)
+    if (input == NULL)
     {
         return 0;
     }
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
             pos += radius * cexp(I * (frequency * time + phase));
 
             ccircleRGBA(screen, prevPos + offset, radius, 0x7f, 0x7f, 0x7f, 0x7f);
-            clineRGBA(screen, prevPos + offset, pos + offset, 0xff, 0xff, 0xff, 0xff);
+            clineRGBA(screen, prevPos + offset, pos + offset, 0xff, 0xff, 0x00, 0xff);
         }
 
         queue[queueIdx] = pos;
@@ -83,13 +83,18 @@ int main(int argc, char **argv)
         {
             size_t q = (length + (queueIdx - i)) % length;
             size_t pq = (q + 1) % length;
-            clineRGBA(screen, queue[q] + offset, queue[pq] + offset, 0xff, 0xff, 0x00, 0xff);
+            clineRGBA(screen, queue[q] + offset, queue[pq] + offset, 0xff, 0xff, 0xff, 0xff);
         }
         queueIdx = (queueIdx + 1) % length;
 
         SDL_Flip(screen);
 
         time += 2 * M_PI / length;
+        if (time > 2 * M_PI)
+        {
+            time -= 2 * M_PI;
+        }
+        SDL_Delay(10);
     }
 
     SDL_Quit();
